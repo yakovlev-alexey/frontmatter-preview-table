@@ -3,7 +3,8 @@
   "displayName": "Frontmatter Preview Table",
   "description": "Renders YAML frontmatter as a styled table in Markdown preview",
   "version": "0.1.0",
-  "publisher": "frontmatter-preview-table",
+  "publisher": "yakovlev-alexey",
+  "license": "MIT",
   "engines": {
     "vscode": "^1.80.0"
   },

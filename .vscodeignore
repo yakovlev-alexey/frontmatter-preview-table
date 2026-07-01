@@ -11,3 +11,5 @@ vitest.config.ts
 .gitignore
 DESIGN.md
 pnpm-lock.yaml
+pnpm-workspace.yaml
+.pnpm-store/**
