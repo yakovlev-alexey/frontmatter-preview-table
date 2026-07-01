@@ -1,0 +1,37 @@
+{
+  "name": "frontmatter-preview-table",
+  "displayName": "Frontmatter Preview Table",
+  "description": "Renders YAML frontmatter as a styled table in Markdown preview",
+  "version": "0.1.0",
+  "publisher": "frontmatter-preview-table",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": ["onLanguage:markdown"],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "markdown.markdownItPlugins": true,
+    "markdown.previewStyles": ["./media/frontmatter.css"]
+  },
+  "scripts": {
+    "build": "node esbuild.mjs",
+    "watch": "node esbuild.mjs --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "package": "vsce package --no-dependencies"
+  },
+  "dependencies": {
+    "yaml": "^2.8.0"
+  },
+  "devDependencies": {
+    "@types/markdown-it": "^14.1.2",
+    "@types/node": "^22.15.0",
+    "@types/vscode": "^1.80.0",
+    "@vscode/vsce": "^3.5.0",
+    "esbuild": "^0.25.5",
+    "markdown-it": "^14.1.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  }
+}

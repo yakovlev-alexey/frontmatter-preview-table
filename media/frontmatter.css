@@ -1,0 +1,25 @@
+.frontmatter-table {
+  background: var(--vscode-textBlockQuote-background, var(--vscode-editor-inactiveSelectionBackground));
+  border: 1px solid var(--vscode-panel-border);
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-family: var(--vscode-editor-font-family);
+}
+
+.frontmatter-table table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.frontmatter-table td {
+  border: none;
+  padding: 2px 0;
+}
+
+.frontmatter-table .fm-key {
+  color: var(--vscode-descriptionForeground);
+}
+
+.frontmatter-table .fm-value {
+  color: var(--vscode-foreground);
+}
