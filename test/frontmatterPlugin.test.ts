@@ -37,6 +37,29 @@ describe('extractFrontmatterBlock', () => {
       endLine: 1,
     });
   });
+
+  it('accepts opening fence with trailing spaces', () => {
+    const block = extractFrontmatterBlock('--- \ntitle: Hello\n---\n# Content');
+    expect(block).toEqual({
+      yamlText: 'title: Hello',
+      startLine: 0,
+      endLine: 2,
+    });
+  });
+
+  it('does not treat indented --- as closing fence', () => {
+    const block = extractFrontmatterBlock(`---
+description: |
+  ---
+  text after dash line
+---
+# Content`);
+    expect(block).toEqual({
+      yamlText: 'description: |\n  ---\n  text after dash line',
+      startLine: 0,
+      endLine: 4,
+    });
+  });
 });
 
 describe('processFrontmatter', () => {
@@ -108,5 +131,27 @@ author:
     expect(html).toContain('author.name');
     expect(html).toContain('John');
     expect(html).not.toContain('name: John');
+  });
+
+  it('does not close frontmatter on indented --- inside yaml', () => {
+    const md = createMarkdownIt();
+    const html = md.render(`---
+description: |
+  ---
+  text after dash line
+---
+# Heading`);
+    expect(html).toContain('frontmatter-table');
+    expect(html).toContain('text after dash line');
+    expect(html).toContain('<h1>Heading</h1>');
+    expect(html).not.toMatch(/<h2>text after dash line<\/h2>/);
+  });
+
+  it('accepts opening fence with trailing spaces', () => {
+    const md = createMarkdownIt();
+    const html = md.render('--- \ntitle: Hello\n---\n# Heading');
+    expect(html).toContain('frontmatter-table');
+    expect(html).toContain('Hello');
+    expect(html).not.toContain('title: Hello');
   });
 });

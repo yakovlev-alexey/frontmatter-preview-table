@@ -12,15 +12,31 @@ export interface FrontmatterBlock {
   endLine: number;
 }
 
+export function isOpeningFenceLine(line: string): boolean {
+  if (!line.startsWith(FENCE_MARKER)) {
+    return false;
+  }
+
+  return line.slice(FENCE_LENGTH).trim().length === 0;
+}
+
+export function isClosingFenceLine(line: string): boolean {
+  if (!line.startsWith(FENCE_MARKER)) {
+    return false;
+  }
+
+  return line.slice(FENCE_LENGTH).trim().length === 0;
+}
+
 export function extractFrontmatterBlock(src: string): FrontmatterBlock | null {
   const lines = src.split('\n');
-  if (lines[0] !== FENCE_MARKER) {
+  if (!isOpeningFenceLine(lines[0] ?? '')) {
     return null;
   }
 
   let closeLine = -1;
   for (let i = 1; i < lines.length; i++) {
-    if (lines[i].trim() === FENCE_MARKER) {
+    if (isClosingFenceLine(lines[i] ?? '')) {
       closeLine = i;
       break;
     }
@@ -56,11 +72,6 @@ export function processFrontmatter(src: string): {
   return { tableHtml, body, consumed: true };
 }
 
-function isClosingFence(line: string): boolean {
-  const trimmed = line.trim();
-  return trimmed === FENCE_MARKER;
-}
-
 function frontmatterRule(
   state: StateBlock,
   startLine: number,
@@ -73,31 +84,21 @@ function frontmatterRule(
 
   const pos = state.bMarks[startLine] + state.tShift[startLine];
   const max = state.eMarks[startLine];
+  const openingLine = state.src.slice(pos, max);
 
-  if (pos + FENCE_LENGTH > max) {
+  if (!isOpeningFenceLine(openingLine)) {
     return false;
-  }
-
-  if (state.src.slice(pos, pos + FENCE_LENGTH) !== FENCE_MARKER) {
-    return false;
-  }
-
-  if (pos + FENCE_LENGTH < max && state.src.charCodeAt(pos + FENCE_LENGTH) !== 0x0a) {
-    const rest = state.src.slice(pos + FENCE_LENGTH, max).trim();
-    if (rest.length > 0) {
-      return false;
-    }
   }
 
   let nextLine = startLine + 1;
   let autoClosed = false;
 
   while (nextLine < endLine) {
-    const lineStart = state.bMarks[nextLine] + state.tShift[nextLine];
+    const lineStart = state.bMarks[nextLine];
     const lineMax = state.eMarks[nextLine];
     const line = state.src.slice(lineStart, lineMax);
 
-    if (isClosingFence(line)) {
+    if (isClosingFenceLine(line)) {
       autoClosed = true;
       break;
     }
